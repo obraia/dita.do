@@ -6,7 +6,7 @@ window.data = {
 };
 
 import { loadNavbar } from "./navbar.js";
-import { nextLine, loadGrid } from "./grid.js";
+import { nextLine, loadGrid, paintLine, unselectAll } from "./grid.js";
 import { loadKeyboard } from "./keyboard.js";
 import { loadHelp } from "./help.js";
 
@@ -19,6 +19,8 @@ function onSubmit() {
     (data.currentRow + 1) * data.columns
   );
 
+  unselectAll();
+  paintLine(["green", "yellow", "black", "black", "yellow"]);
   nextLine();
 }
 
@@ -47,5 +49,6 @@ function onLoad() {
   });
 }
 
-window.onSubmit = onSubmit;
 window.addEventListener("load", onLoad);
+
+export { onSubmit };

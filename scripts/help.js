@@ -8,18 +8,26 @@ function loadHelp(params) {
     "Press the letter keys to select a letter.",
   ];
 
-  const list = document.createElement("ul");
+  const list = document.createElement("ol");
+
   list.classList.add("help_info_instructions");
 
   for (let i = 0; i < instructions.length; i++) {
     const item = document.createElement("li");
 
     item.classList.add("help_info_instructions_item");
-    item.innerText = `${i + 1} - ${instructions[i]}`;
+    item.innerText = instructions[i];
 
+    list.appendChild(item);
   }
 
-  // params.help.firstElementChild.appendChild(list);
+  params.help.addEventListener("click", toggleHelp);
+
+  params.help.firstElementChild.addEventListener("click", (event) => {
+    event.stopPropagation();
+  });
+
+  params.help.firstElementChild.appendChild(list);
 }
 
 function toggleHelp() {

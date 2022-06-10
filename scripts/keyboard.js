@@ -1,4 +1,10 @@
-import { moveSelection, moveSelectionRight, moveSelectionLeft } from "./grid.js";
+import {
+  moveSelection,
+  moveSelectionRight,
+  moveSelectionLeft,
+  selectInitialFieldOfCurrentRow,
+} from "./grid.js";
+import { onSubmit } from "./main.js";
 
 function onKeyClick(text) {
   const isDelete = text === "⌫";
@@ -6,10 +12,6 @@ function onKeyClick(text) {
 
   if (isEnter) {
     return onSubmit();
-  }
-
-  if (data.selectedFields.length === 0) {
-    return;
   }
 
   data.selectedFields.forEach(function (field) {
@@ -26,8 +28,7 @@ function onKeyClick(text) {
 
   if (isDelete) {
     moveSelectionLeft(field);
-  }
-  else {
+  } else {
     moveSelectionRight(field);
   }
 }
@@ -37,7 +38,14 @@ function createKey(text) {
 
   key.innerText = text;
   key.classList.add("main_keyboard_row_key");
-  key.addEventListener("click", () => onKeyClick(text));
+
+  key.addEventListener("click", () => {
+    if (data.selectedFields.length === 0) {
+      selectInitialFieldOfCurrentRow();
+    }
+
+    onKeyClick(text);
+  });
 
   if (text === "⌫") {
     key.classList.add("delete");
@@ -72,13 +80,19 @@ function loadKeyboard(params) {
 
   window.addEventListener("keydown", function (event) {
     const isLetter = event.key.length === 1 && event.key.match(/[a-z]/i);
+    const isDelete = event.key === "Backspace";
+    const isEnter = event.key === "Enter";
+
+    if (data.selectedFields.length === 0 && !isEnter) {
+      selectInitialFieldOfCurrentRow();
+    }
 
     if (isLetter) {
-      return onKeyClick(event.key);
-    } else if (event.key === "Backspace") {
-      return onKeyClick("⌫");
-    } else if (event.key === "Enter") {
-      return onKeyClick("Enter");
+      onKeyClick(event.key);
+    } else if (isDelete) {
+      onKeyClick("⌫");
+    } else if (isEnter) {
+      onKeyClick("Enter");
     } else if (["ArrowLeft", "ArrowRight"].includes(event.key)) {
       moveSelection(event.key);
     }

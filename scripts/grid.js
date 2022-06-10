@@ -22,10 +22,30 @@ function unselectOthers(except) {
   }
 }
 
+function selectInitialFieldOfCurrentRow() {
+  const fields = document.getElementsByClassName("main_grid_field");
+  const initialIndex = data.currentRow * data.columns;
+  const finalIndex = initialIndex + data.columns;
+  let index = finalIndex - 1;
+
+  for (let i = initialIndex; i < finalIndex; i++) {
+    if (fields[i].innerText === "") {
+      index = i;
+      break;
+    }
+  }
+
+  fields[index].classList.add("selected");
+  data.selectedFields.push(fields[index]);
+}
+
 function moveSelectionLeft(field) {
   const previousField = field.previousElementSibling;
 
-  if (previousField && previousField.getAttribute("key")) {
+  if (
+    previousField &&
+    previousField.getAttribute("key") % data.columns !== data.columns - 1
+  ) {
     unselectOthers(previousField);
     previousField.classList.add("selected");
     data.selectedFields.push(previousField);
@@ -47,9 +67,9 @@ function moveSelection(key) {
 
   const selectedField = data.selectedFields[data.selectedFields.length - 1];
 
-  if (key === 'ArrowLeft') {
+  if (key === "ArrowLeft") {
     moveSelectionLeft(selectedField);
-  } else if (key === 'ArrowRight') {
+  } else if (key === "ArrowRight") {
     moveSelectionRight(selectedField);
   }
 }
@@ -70,8 +90,6 @@ function onFieldSelect(field) {
 }
 
 function nextLine() {
-  checkCurrentLine();
-
   data.currentRow++;
 
   const fields = document.getElementsByClassName("main_grid_field");
@@ -84,16 +102,18 @@ function nextLine() {
   for (let i = initialIndex; i < finalIndex; i++) {
     fields[i].classList.remove("disabled");
   }
+
+  selectInitialFieldOfCurrentRow();
 }
 
-function checkCurrentLine() {
+function paintLine(colors) {
   const fields = document.getElementsByClassName("main_grid_field");
 
   const initialIndex = data.currentRow * data.columns;
   const finalIndex = initialIndex + data.columns;
 
   for (let i = initialIndex; i < finalIndex; i++) {
-    fields[i].classList.add("green");
+    fields[i].classList.add(colors[i - initialIndex]);
   }
 }
 
@@ -124,8 +144,11 @@ function loadGrid(params) {
 
 export {
   loadGrid,
+  paintLine,
   nextLine,
   moveSelection,
   moveSelectionRight,
-  moveSelectionLeft
+  moveSelectionLeft,
+  selectInitialFieldOfCurrentRow,
+  unselectAll,
 };
