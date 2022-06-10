@@ -1,6 +1,4 @@
-function unselectAll() {
-  const fields = document.getElementsByClassName("main_grid_field");
-
+function unselectAll(fields) {
   for (let i = 0; i < fields.length; i++) {
     fields[i].classList.remove("selected");
   }
@@ -106,25 +104,23 @@ function nextLine() {
   selectInitialFieldOfCurrentRow();
 }
 
-function paintLine(colors) {
-  const fields = document.getElementsByClassName("main_grid_field");
-
-  const initialIndex = data.currentRow * data.columns;
-  const finalIndex = initialIndex + data.columns;
+function paintLine(params) {
+  const initialIndex = params.currentRow * params.columns;
+  const finalIndex = initialIndex + params.columns;
 
   for (let i = initialIndex; i < finalIndex; i++) {
-    fields[i].classList.add(colors[i - initialIndex]);
+    params.fields[i].classList.add(params.colors[i - initialIndex]);
   }
 }
 
-function createField(id) {
+function createField(params) {
   const field = document.createElement("div");
 
-  field.classList.add("main_grid_field");
-  field.setAttribute("key", id);
+  field.classList.add(params.class + "_field");
+  field.setAttribute("key", params.id);
   field.addEventListener("click", () => onFieldSelect(field));
 
-  if (id > (data.currentRow + 1) * data.columns - 1) {
+  if (params.id > (data.currentRow + 1) * data.columns - 1) {
     field.classList.add("disabled");
   }
 
@@ -135,7 +131,11 @@ function loadGrid(params) {
   params.grid.style.gridTemplateColumns = `repeat(${params.columns}, 1fr)`;
 
   for (let i = 0; i < params.rows * params.columns; i++) {
-    const field = createField(i);
+    const field = createField({
+      id: i,
+      class: params.grid.classList[0],
+    });
+
     params.grid.appendChild(field);
   }
 

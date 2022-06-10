@@ -215,17 +215,71 @@ body {
 
 .help_info {
   width: 65%;
-  height: 85%;
-  border-radius: 10px;
-  background-color: #313131;
+  display: grid;
   margin: auto;
+  padding: 10px;
+  gap: 10px;
+  border-radius: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #313131;
   z-index: 5;
+  grid-template-columns: 1fr 2fr;
+  grid-template-rows: 1fr;
+  grid-template-areas:
+    "h_grid h_legend"
+    "h_instructions h_instructions";
 }
 
-.help_infohelp_instructions {
-  font-size: 24px;
-  color: #ffffff;
-  font-weight: bold;
-  text-align: center;
+.help_info_grid {
+  width: min-content;
+  height: min-content;
+  display: grid;
+  grid-gap: 10px;
   padding: 10px;
+  border-radius: 10px;
+  background-color: #212121;
+  grid-area: h_grid;
+}
+
+.help_info_grid_field {
+  width: 70px;
+  height: 70px;
+  display: flex;
+  border-radius: 10px;
+  background-color: #4d4d4d;
+}
+
+.help_info_grid_field.black {
+  background-color: #272727;
+}
+
+.help_info_grid_field.yellow {
+  background-color: #cabb68;
+}
+
+.help_info_grid_field.green {
+  background-color: #6bb17c;
+}
+
+.help_info_legend {
+  width: 100%;
+  padding: 10px;
+  padding-left: 35px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.6;
+  background-color: #212121;
+  color: #ffffff;
+  grid-area: h_legend;
+}
+
+.help_info_instructions {
+  border-radius: 8px;
+  padding: 10px;
+  padding-left: 35px;
+  font-size: 18px;
+  line-height: 1.6;
+  background-color: #212121;
+  color: #ffffff;
+  grid-area: h_instructions;
 }

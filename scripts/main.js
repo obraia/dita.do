@@ -19,8 +19,17 @@ function onSubmit() {
     (data.currentRow + 1) * data.columns
   );
 
-  unselectAll();
-  paintLine(["green", "yellow", "black", "black", "yellow"]);
+  unselectAll({
+    fields: grid.children,
+  });
+
+  paintLine({
+    currentRow: data.currentRow,
+    columns: data.columns,
+    fields: grid.children,
+    colors: ["green", "yellow", "black", "black", "yellow"],
+  });
+
   nextLine();
 }
 
