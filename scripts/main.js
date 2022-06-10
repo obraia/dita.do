@@ -8,6 +8,7 @@ window.data = {
 import { loadNavbar } from "./navbar.js";
 import { nextLine, loadGrid } from "./grid.js";
 import { loadKeyboard } from "./keyboard.js";
+import { loadHelp } from "./help.js";
 
 function onSubmit() {
   const grid = document.getElementById("grid");
@@ -19,14 +20,13 @@ function onSubmit() {
   );
 
   nextLine();
-
-  console.log(word);
 }
 
 function onLoad() {
   const navbar = document.getElementById("navbar");
   const grid = document.getElementById("grid");
   const keyboard = document.getElementById("keyboard");
+  const help = document.getElementById("help");
 
   loadNavbar({
     navbar,
@@ -40,6 +40,10 @@ function onLoad() {
 
   loadKeyboard({
     keyboard,
+  });
+
+  loadHelp({
+    help,
   });
 }
 

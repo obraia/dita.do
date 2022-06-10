@@ -7,8 +7,11 @@
 
 body {
   height: 100vh;
+  position: relative;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   padding: 10px;
   background-color: #1a1a1a;
 }
@@ -60,7 +63,6 @@ body {
 .main_grid {
   width: min-content;
   display: grid;
-  grid-template-columns: auto auto auto auto auto;
   grid-gap: 10px;
   padding: 10px;
   border-radius: 10px;
@@ -186,4 +188,34 @@ body {
 
 .main_keyboard_row_key.enter:active {
   background-color: #2c7a58;
+}
+
+.help {
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #00000088;
+  z-index: 1;
+}
+
+.help_info {
+  width: 65%;
+  height: 85%;
+  border-radius: 10px;
+  background-color: #313131;
+  margin: auto;
+  z-index: 5;
+}
+
+.help_infohelp_instructions {
+  font-size: 24px;
+  color: #ffffff;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
 }

@@ -1,6 +1,8 @@
+import { toggleHelp } from "./help.js";
+
 function loadNavbar(params) {
   const actions = [
-    { content: "?", onClick: () => alert("Help") },
+    { content: "?", onClick: toggleHelp },
     { content: "L", onClick: params.onSubmit },
   ];
 
