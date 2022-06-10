@@ -1,7 +1,6 @@
-function onKeyClick(text) {
-  let nextField = null;
-  let previousField = null;
+import { moveSelection, moveSelectionRight, moveSelectionLeft } from "./grid.js";
 
+function onKeyClick(text) {
   const isDelete = text === "⌫";
   const isEnter = text === "Enter";
 
@@ -9,28 +8,27 @@ function onKeyClick(text) {
     return onSubmit();
   }
 
+  if (data.selectedFields.length === 0) {
+    return;
+  }
+
   data.selectedFields.forEach(function (field) {
     if (isDelete) {
       field.innerText = "";
-      previousField = field.previousSibling;
     } else {
       field.innerText = text;
-      nextField = field.nextSibling;
     }
 
     field.classList.toggle("selected");
   });
 
-  data.selectedFields.splice(0, data.selectedFields.length);
+  const field = data.selectedFields.pop();
 
-  if (nextField && nextField.getAttribute("key") % data.columns !== 0) {
-    nextField.classList.add("selected");
-    data.selectedFields.push(nextField);
+  if (isDelete) {
+    moveSelectionLeft(field);
   }
-
-  if (previousField && previousField.getAttribute("key")) {
-    previousField.classList.add("selected");
-    data.selectedFields.push(previousField);
+  else {
+    moveSelectionRight(field);
   }
 }
 
@@ -71,6 +69,20 @@ function loadKeyboard(params) {
 
     params.keyboard.appendChild(row);
   }
+
+  window.addEventListener("keydown", function (event) {
+    const isLetter = event.key.length === 1 && event.key.match(/[a-z]/i);
+
+    if (isLetter) {
+      return onKeyClick(event.key);
+    } else if (event.key === "Backspace") {
+      return onKeyClick("⌫");
+    } else if (event.key === "Enter") {
+      return onKeyClick("Enter");
+    } else if (["ArrowLeft", "ArrowRight"].includes(event.key)) {
+      moveSelection(event.key);
+    }
+  });
 }
 
 export { loadKeyboard };

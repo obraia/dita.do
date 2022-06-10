@@ -12,7 +12,45 @@ function unselectOthers(except) {
   for (let i = 0; i < fields.length; i++) {
     if (fields[i] !== except) {
       fields[i].classList.remove("selected");
+
+      const fieldIndex = data.selectedFields.indexOf(fields[i]);
+
+      if (fieldIndex !== -1) {
+        data.selectedFields.splice(fieldIndex, 1);
+      }
     }
+  }
+}
+
+function moveSelectionLeft(field) {
+  const previousField = field.previousElementSibling;
+
+  if (previousField && previousField.getAttribute("key")) {
+    unselectOthers(previousField);
+    previousField.classList.add("selected");
+    data.selectedFields.push(previousField);
+  }
+}
+
+function moveSelectionRight(field) {
+  const nextField = field.nextElementSibling;
+
+  if (nextField && nextField.getAttribute("key") % data.columns !== 0) {
+    unselectOthers(nextField);
+    nextField.classList.add("selected");
+    data.selectedFields.push(nextField);
+  }
+}
+
+function moveSelection(key) {
+  if (data.selectedFields.length === 0) return;
+
+  const selectedField = data.selectedFields[data.selectedFields.length - 1];
+
+  if (key === 'ArrowLeft') {
+    moveSelectionLeft(selectedField);
+  } else if (key === 'ArrowRight') {
+    moveSelectionRight(selectedField);
   }
 }
 
@@ -32,6 +70,10 @@ function onFieldSelect(field) {
 }
 
 function nextLine() {
+  checkCurrentLine();
+
+  data.currentRow++;
+
   const fields = document.getElementsByClassName("main_grid_field");
 
   const initialIndex = data.currentRow * data.columns;
@@ -42,8 +84,17 @@ function nextLine() {
   for (let i = initialIndex; i < finalIndex; i++) {
     fields[i].classList.remove("disabled");
   }
+}
 
-  data.currentRow++;
+function checkCurrentLine() {
+  const fields = document.getElementsByClassName("main_grid_field");
+
+  const initialIndex = data.currentRow * data.columns;
+  const finalIndex = initialIndex + data.columns;
+
+  for (let i = initialIndex; i < finalIndex; i++) {
+    fields[i].classList.add("green");
+  }
 }
 
 function createField(id) {
@@ -61,6 +112,8 @@ function createField(id) {
 }
 
 function loadGrid(params) {
+  params.grid.style.gridTemplateColumns = `repeat(${params.columns}, 1fr)`;
+
   for (let i = 0; i < params.rows * params.columns; i++) {
     const field = createField(i);
     params.grid.appendChild(field);
@@ -69,4 +122,10 @@ function loadGrid(params) {
   return grid;
 }
 
-export { loadGrid, nextLine };
+export {
+  loadGrid,
+  nextLine,
+  moveSelection,
+  moveSelectionRight,
+  moveSelectionLeft
+};
