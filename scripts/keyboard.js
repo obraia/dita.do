@@ -1,5 +1,3 @@
-import { onSubmit } from "./main.js";
-
 class Key {
   _element = null;
 
@@ -16,19 +14,19 @@ class Key {
   }
 
   _create(params) {
-    const key = document.createElement("div");
+    const key = document.createElement('div');
 
     key.innerText = params.value;
-    key.addEventListener("click", () => params.onClick(this));
+    key.addEventListener('click', () => params.onClick(this));
 
-    key.classList.add(params.parent.classList[0] + "_key");
+    key.classList.add(params.parent.classList[0] + '_key');
 
-    if (params.value === "⌫") {
-      key.classList.add("delete");
+    if (params.value === '⌫') {
+      key.classList.add('delete');
     }
 
-    if (params.value === "Enter") {
-      key.classList.add("enter");
+    if (params.value === 'Enter') {
+      key.classList.add('enter');
     }
 
     return key;
@@ -37,11 +35,11 @@ class Key {
 
 class Keyboard {
   _element = null;
-  _grid = null;
+  _grids = null;
   _keys = [];
 
   constructor(params) {
-    this._grid = params.grid;
+    this._grids = params.grids;
 
     this._element = this._create({
       parent: params.parent,
@@ -57,24 +55,24 @@ class Keyboard {
   }
 
   _create(params) {
-    const keyboard = document.createElement("div");
-    keyboard.classList.add(params.parent.classList[0] + "_keyboard");
+    const keyboard = document.createElement('div');
+    keyboard.classList.add(params.parent.classList[0] + '_keyboard');
 
     const keys = [
-      ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
-      ["a", "s", "d", "f", "g", "h", "j", "k", "l", "⌫"],
-      ["z", "x", "c", "v", "b", "n", "m", "Enter"],
+      ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
+      ['a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', '⌫'],
+      ['z', 'x', 'c', 'v', 'b', 'n', 'm', 'Enter'],
     ];
 
     for (let i = 0; i < keys.length; i++) {
-      const row = document.createElement("div");
-      row.classList.add(keyboard.classList[0] + "_row");
+      const row = document.createElement('div');
+      row.classList.add(keyboard.classList[0] + '_row');
 
       for (let j = 0; j < keys[i].length; j++) {
         const key = new Key({
           parent: row,
           value: keys[i][j],
-          onClick: this._onKeyClick.bind(this),
+          onClick: () => this._grids.forEach((g) => this._onKeyClick.bind(this)(key, g)),
         });
 
         row.appendChild(key.element);
@@ -84,57 +82,55 @@ class Keyboard {
       keyboard.appendChild(row);
     }
 
-    window.addEventListener("keydown", (event) => {
-      const isLetter = event.key.length === 1 && event.key.match(/[a-z]/i);
-      const isDelete = event.key === "Backspace";
-      const isEnter = event.key === "Enter";
-
-      if (!this._grid.hasSelectedField && !isEnter) {
-        this._grid.selectInitialField();
-      }
-
-      const field = this._grid.lastSelectedField;
+    window.addEventListener('keydown', ({ key }) => {
+      const isLetter = Boolean(key.length === 1 && key.match(/[a-z]/i));
 
       if (isLetter) {
-        this._onKeyClick({ value: event.key });
-      } else if (isDelete) {
-        this._onKeyClick({ value: "⌫" });
-      } else if (isEnter) {
-        this._onKeyClick({ value: "Enter" });
-      } else if (event.key === 'ArrowLeft') {
-        this._grid.selectPreviousField(field);
-      } else if (event.key === 'ArrowRight') {
-        this._grid.selectNextField(field);
+        return this._grids.forEach((g) => this._onKeyClick({ value: key }, g));
+      }
+
+      const comands = {
+        Backspace: () => this._grids.forEach((g) => this._onKeyClick({ value: '⌫' }, g)),
+        Delete: () => this._grids.forEach((g) => this._onKeyClick({ value: key }, g)),
+        Enter: () => this._grids.forEach((g) => this._onKeyClick({ value: key }, g)),
+        ArrowLeft: () => this._grids.forEach((g) => g.selectPreviousField()),
+        ArrowRight: () => this._grids.forEach((g) => g.selectNextField()),
+      };
+
+      if (comands[key]) {
+        comands[key]();
       }
     });
 
     return keyboard;
   }
 
-  _onKeyClick(key) {
-    const isDelete = key.value === "⌫";
-    const isEnter = key.value === "Enter";
+  _onKeyClick(key, grid) {
+    const value = key.value.toUpperCase();
+    const isBackspace = value === '⌫';
+    const isDelete = value === 'DELETE';
+    const isEnter = value === 'ENTER';
 
     if (isEnter) {
-      return onSubmit();
+      return grid.handleSubmit();
     }
 
-    this._grid.selectedFields.forEach((field) => {
-      if (isDelete) {
-        field.element.innerText = "";
-      } else {
-        field.element.innerText = key.value;
-      }
+    if (!grid.hasSelectedField) {
+      grid.selectInitialField();
+    }
 
-      field.unselect();
+    grid.selectedFields.forEach((field) => {
+      if (isBackspace || isDelete) {
+        field.value = '';
+      } else {
+        field.value = value;
+      }
     });
 
-    const field = this.this._grid.lastSelectedField;
-
-    if (isDelete) {
-      this._grid.selectPreviousField(field);
+    if (isBackspace) {
+      grid.selectPreviousField();
     } else {
-      this._grid.selectNextField(field);
+      grid.selectNextField();
     }
   }
 }
