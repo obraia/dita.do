@@ -1,21 +1,21 @@
-import { loadGrid, paintLine } from "./grid.js";
+import { Grid } from "./grid.js";
 
 function loadExempleGrid(params) {
   const grid = document.createElement("div");
   grid.classList.add("help_info_grid");
 
-  loadGrid({
-    rows: 1,
-    columns: 3,
-    grid,
-  });
+  // loadGrid({
+  //   rows: 1,
+  //   columns: 3,
+  //   grid,
+  // });
 
-  paintLine({
-    currentRow: 0,
-    columns: 3,
-    fields: grid.children,
-    colors: ["green", "yellow", "black"],
-  });
+  // paintLine({
+  //   currentRow: 0,
+  //   columns: 3,
+  //   fields: grid.children,
+  //   colors: ["green", "yellow", "black"],
+  // });
 
   params.parent.appendChild(grid);
 }

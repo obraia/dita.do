@@ -1,154 +1,195 @@
-function unselectAll(fields) {
-  for (let i = 0; i < fields.length; i++) {
-    fields[i].classList.remove("selected");
+class GridField {
+  _element = null;
+
+  constructor(params) {
+    this._key = params.key;
+    this._element = this._create(params);
+  }
+
+  get element() {
+    return this._element;
+  }
+
+  get previousElement() {
+    return this._element.previousElementSibling;
+  }
+
+  get nextElement() {
+    return this._element.nextElementSibling;
+  }
+
+  get isSelected() {
+    return this._element.classList.contains("selected")
+  }
+
+  get key() {
+    return Number(this._element.getAttribute("key"));
+  }
+
+  _create(params) {
+    const field = document.createElement("div");
+    const [parentClass] = params.parent.classList;
+
+    field.classList.add(parentClass + "_field");
+    field.setAttribute("key", params.key);
+    field.addEventListener("click", () => params.onClick(this));
+
+    return field;
+  }
+
+  paint(color) {
+    this._element.classList.add(color);
+  }
+
+  select() {
+    this._element.classList.add("selected");
+  }
+
+  unselect() {
+    this._element.classList.remove("selected");
+  }
+
+  toggle() {
+    this._element.classList.toggle("selected");
+  }
+
+  disable() {
+    this._element.classList.add("disable");
   }
 }
 
-function unselectOthers(except) {
-  const fields = document.getElementsByClassName("main_grid_field");
+class Grid {
+  _rows = 0;
+  _columns = 0;
+  _currentRow = 0;
+  _element = null;
+  _fields = [];
 
-  for (let i = 0; i < fields.length; i++) {
-    if (fields[i] !== except) {
-      fields[i].classList.remove("selected");
+  constructor(params) {
+    this.rows = params.rows;
+    this.columns = params.columns;
 
-      const fieldIndex = data.selectedFields.indexOf(fields[i]);
-
-      if (fieldIndex !== -1) {
-        data.selectedFields.splice(fieldIndex, 1);
-      }
-    }
-  }
-}
-
-function selectInitialFieldOfCurrentRow() {
-  const fields = document.getElementsByClassName("main_grid_field");
-  const initialIndex = data.currentRow * data.columns;
-  const finalIndex = initialIndex + data.columns;
-  let index = finalIndex - 1;
-
-  for (let i = initialIndex; i < finalIndex; i++) {
-    if (fields[i].innerText === "") {
-      index = i;
-      break;
-    }
-  }
-
-  fields[index].classList.add("selected");
-  data.selectedFields.push(fields[index]);
-}
-
-function moveSelectionLeft(field) {
-  const previousField = field.previousElementSibling;
-
-  if (
-    previousField &&
-    previousField.getAttribute("key") % data.columns !== data.columns - 1
-  ) {
-    unselectOthers(previousField);
-    previousField.classList.add("selected");
-    data.selectedFields.push(previousField);
-  }
-}
-
-function moveSelectionRight(field) {
-  const nextField = field.nextElementSibling;
-
-  if (nextField && nextField.getAttribute("key") % data.columns !== 0) {
-    unselectOthers(nextField);
-    nextField.classList.add("selected");
-    data.selectedFields.push(nextField);
-  }
-}
-
-function moveSelection(key) {
-  if (data.selectedFields.length === 0) return;
-
-  const selectedField = data.selectedFields[data.selectedFields.length - 1];
-
-  if (key === "ArrowLeft") {
-    moveSelectionLeft(selectedField);
-  } else if (key === "ArrowRight") {
-    moveSelectionRight(selectedField);
-  }
-}
-
-function onFieldSelect(field) {
-  field.classList.toggle("selected");
-
-  if (field.classList.contains("selected")) {
-    if (window.event.shiftKey) {
-      data.selectedFields.push(field);
-    } else {
-      data.selectedFields = [field];
-      unselectOthers(field);
-    }
-  } else {
-    data.selectedFields.splice(data.selectedFields.indexOf(field), 1);
-  }
-}
-
-function nextLine() {
-  data.currentRow++;
-
-  const fields = document.getElementsByClassName("main_grid_field");
-
-  const initialIndex = data.currentRow * data.columns;
-  const finalIndex = initialIndex + data.columns;
-
-  if (finalIndex > fields.length) return;
-
-  for (let i = initialIndex; i < finalIndex; i++) {
-    fields[i].classList.remove("disabled");
-  }
-
-  selectInitialFieldOfCurrentRow();
-}
-
-function paintLine(params) {
-  const initialIndex = params.currentRow * params.columns;
-  const finalIndex = initialIndex + params.columns;
-
-  for (let i = initialIndex; i < finalIndex; i++) {
-    params.fields[i].classList.add(params.colors[i - initialIndex]);
-  }
-}
-
-function createField(params) {
-  const field = document.createElement("div");
-
-  field.classList.add(params.class + "_field");
-  field.setAttribute("key", params.id);
-  field.addEventListener("click", () => onFieldSelect(field));
-
-  if (params.id > (data.currentRow + 1) * data.columns - 1) {
-    field.classList.add("disabled");
-  }
-
-  return field;
-}
-
-function loadGrid(params) {
-  params.grid.style.gridTemplateColumns = `repeat(${params.columns}, 1fr)`;
-
-  for (let i = 0; i < params.rows * params.columns; i++) {
-    const field = createField({
-      id: i,
-      class: params.grid.classList[0],
+    this._element = this._createGrid({
+      parent: params.parent,
+      columns: params.columns,
+      rows: params.rows,
     });
-
-    params.grid.appendChild(field);
   }
 
-  return grid;
+  get element() {
+    return this._element;
+  }
+
+  get fields() {
+    return this._fields;
+  }
+
+  get selectedFields() {
+    return this._fields.filter(field => field.isSelected);
+  }
+
+  get lastSelectedField() {
+    return this.selectedFields[this.selectedFields.length - 1];
+  }
+
+  get currentRowFields() {
+
+  }
+
+  get hasSelectedField() {
+    return this._fields.some(field => field.isSelected);
+  }
+
+  _createGrid(params) {
+    const grid = document.createElement("div");
+
+    grid.classList.add(params.parent.classList[0] + "_grid");
+    grid.style.gridTemplateColumns = `repeat(${params.columns}, 1fr)`;
+
+    for (let i = 0; i < params.rows * params.columns; i++) {
+      const field = new GridField({
+        parent: grid,
+        key: i,
+        onClick: this.onFieldSelect.bind(this),
+      });
+
+      this._fields.push(field);
+      grid.appendChild(field.element);
+    }
+
+    return grid;
+  }
+
+  unselectAllFields() {
+    this._fields.forEach(field => {
+      field.unselect();
+    });
+  }
+
+  unselectOthersFields(except) {
+    this._fields.forEach(field => {
+      if (field !== except) {
+        field.unselect();
+      }
+    });
+  }
+
+  selectInitialField() {
+    const field = this._fields.find(f => f.element.innerText === "");
+    field.select();
+  }
+
+  selectPreviousField(field) {
+    const previous = this._fields[field.key - 1];
+
+    if (
+      previous.key % this._columns !== this._columns - 1
+    ) {
+      this.unselectOthersFields(previous);
+      previous.select();
+    }
+  }
+
+  selectNextField(field) {
+    const next = this._fields[field.key + 1];
+
+    if (next.key % this._columns !== 0) {
+      this.unselectOthersFields(next);
+      next.select();
+    }
+  }
+
+  onFieldSelect(field) {
+    field.select();
+
+    if (!window.event.shiftKey) {
+      this.unselectOthersFields(field);
+    }
+  }
+
+  nextLine() {
+    this._currentRow++;
+
+    const initialIndex = this._currentRow * this._columns;
+    const finalIndex = initialIndex + this._columns;
+
+    if (finalIndex > fields.length) return;
+
+    for (let i = initialIndex; i < finalIndex; i++) {
+      this._fields[i].element.disable();
+    }
+
+    this.selectInitialField();
+  }
+
+  paintLine(colors) {
+    const initialIndex = this._currentRow * this._columns;
+    const finalIndex = initialIndex + this._columns;
+
+    for (let i = initialIndex; i < finalIndex; i++) {
+      this._fields[i].paint(colors[i - initialIndex]);
+    }
+  }
 }
 
-export {
-  loadGrid,
-  paintLine,
-  nextLine,
-  moveSelection,
-  moveSelectionRight,
-  moveSelectionLeft,
-  selectInitialFieldOfCurrentRow,
-  unselectAll,
-};
+export { Grid };

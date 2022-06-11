@@ -1,13 +1,6 @@
-window.data = {
-  rows: 6,
-  columns: 5,
-  currentRow: 0,
-  selectedFields: [],
-};
-
 import { loadNavbar } from "./navbar.js";
-import { nextLine, loadGrid, paintLine, unselectAll } from "./grid.js";
-import { loadKeyboard } from "./keyboard.js";
+import { Grid } from "./grid.js";
+import { Keyboard } from "./keyboard.js";
 import { loadHelp } from "./help.js";
 
 function onSubmit() {
@@ -34,24 +27,30 @@ function onSubmit() {
 }
 
 function onLoad() {
-  const navbar = document.getElementById("navbar");
-  const grid = document.getElementById("grid");
-  const keyboard = document.getElementById("keyboard");
-  const help = document.getElementById("help");
+  const get = (id) => document.getElementById(id);
+
+  const navbar = get("navbar");
+  const main = get("main");
+  const help = get("help");
 
   loadNavbar({
     navbar,
   });
 
-  loadGrid({
-    rows: data.rows,
-    columns: data.columns,
-    grid,
+  const grid = new Grid({
+    rows: 6,
+    columns: 5,
+    parent: main
   });
 
-  loadKeyboard({
-    keyboard,
+  const keyboard = new Keyboard({
+    parent: main,
+    onSubmit: onSubmit,
+    grid: grid,
   });
+
+  get("grid").replaceWith(grid.element);
+  get("keyboard").replaceWith(keyboard.element);
 
   loadHelp({
     help,
