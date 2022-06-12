@@ -22,4 +22,22 @@
       <div class="help_info"></div>
     </div>
   </body>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.8.3/firebase-app.js';
+    import { getAnalytics } from 'https://www.gstatic.com/firebasejs/9.8.3/firebase-analytics.js';
+
+    const firebaseConfig = {
+      apiKey: 'AIzaSyB1owxWlLghsbtzCROvwI2IbQt7MOy-_HY',
+      authDomain: 'dita-do.firebaseapp.com',
+      projectId: 'dita-do',
+      storageBucket: 'dita-do.appspot.com',
+      messagingSenderId: '4880786849',
+      appId: '1:4880786849:web:47caa09b5950b84d9197e0',
+      measurementId: 'G-NPL0JKX7ZP',
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
 </html>
