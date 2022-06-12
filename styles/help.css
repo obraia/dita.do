@@ -1,12 +1,13 @@
 .help {
   width: 100vw;
   height: 100vh;
+  display: flex;
   position: fixed;
   top: 0;
   left: 0;
-  display: flex;
   justify-content: center;
   align-items: center;
+  padding: 10px;
   background-color: #00000088;
   z-index: 1;
 
@@ -87,4 +88,45 @@
   background-color: #212121;
   color: #ffffff;
   grid-area: h_instructions;
+}
+
+@media screen and (max-width: 1000px) {
+  .help_info {
+    width: 80%;
+  }
+
+  .help_info_instructions {
+    font-size: 16px;
+  }
+}
+
+@media screen and (max-width: 750px) {
+  .help_info {
+    width: 100%;
+    padding: 5px;
+    gap: 5px;
+  }
+
+  .help_info_grid {
+    padding: 5px;
+    gap: 5px;
+    grid-template-columns: none !important;
+  }
+
+  .help_info_grid_field {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+  }
+
+  .help_info_legend {
+    padding: 5px;
+    padding-left: 25px;
+  }
+
+  .help_info_instructions {
+    padding: 5px;
+    padding-left: 25px;
+    font-size: 14px;
+  }
 }
