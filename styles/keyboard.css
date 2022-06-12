@@ -95,8 +95,14 @@
   .main_keyboard {
     width: 100%;
     padding: 5px;
+    gap: 2px;
     align-self: flex-end;
     justify-self: flex-end;
+  }
+
+  .main_keyboard_row {
+    gap: 2px;
+    font-size: 12px;
   }
 
   .main_keyboard_row_key {
