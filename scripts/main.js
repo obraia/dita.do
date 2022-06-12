@@ -40,7 +40,7 @@ function onLoad() {
     navbar,
   });
 
-  const level = 'Hard';
+  const level = 'Easy';
   const grids = [];
 
   for (let i = 0; i < LEVELS[level].grids; i++) {

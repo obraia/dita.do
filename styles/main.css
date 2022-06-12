@@ -1,0 +1,69 @@
+@import url(./navbar.css);
+@import url(./grid.css);
+@import url(./keyboard.css);
+@import url(./help.css);
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  border: 0;
+}
+
+body {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  gap: 10px;
+  background-color: #1a1a1a;
+}
+
+.main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.main_title {
+  font-size: 36px;
+  color: #fff;
+  font-weight: bold;
+  text-align: center;
+}
+
+.main_row {
+  max-width: 100%;
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+}
+
+@media screen and (max-width: 1565px) {
+  .main_row {
+    padding-bottom: 10px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .main {
+    padding: 0;
+    gap: 10px;
+  }
+}
+
+@media screen and (max-width: 420px) {
+  .main_title {
+    margin-top: auto;
+  }
+}
