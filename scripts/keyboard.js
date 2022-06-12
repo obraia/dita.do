@@ -1,7 +1,10 @@
-class Key {
+import { Component } from './component.js';
+
+class Key extends Component {
   _element = null;
 
   constructor(params) {
+    super(params);
     this._element = this._create(params);
   }
 
@@ -14,12 +17,13 @@ class Key {
   }
 
   _create(params) {
-    const key = document.createElement('div');
-
-    key.innerText = params.value;
-    key.addEventListener('click', () => params.onClick(this));
-
-    key.classList.add(params.parent.classList[0] + '_key');
+    const key = super._createElement({
+      tag: 'div',
+      name: 'key',
+      parent: params.parent,
+      innerText: params.value,
+      events: { click: () => params.onClick(this) },
+    });
 
     if (params.value === '⌫') {
       key.classList.add('delete');
@@ -33,17 +37,15 @@ class Key {
   }
 }
 
-class Keyboard {
+class Keyboard extends Component {
   _element = null;
   _grids = null;
   _keys = [];
 
   constructor(params) {
+    super(params);
     this._grids = params.grids;
-
-    this._element = this._create({
-      parent: params.parent,
-    });
+    this._element = this._create(params);
   }
 
   get element() {
@@ -55,8 +57,11 @@ class Keyboard {
   }
 
   _create(params) {
-    const keyboard = document.createElement('div');
-    keyboard.classList.add(params.parent.classList[0] + '_keyboard');
+    const keyboard = super._createElement({
+      tag: 'div',
+      name: 'keyboard',
+      parent: params.parent,
+    });
 
     const keys = [
       ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'],
@@ -65,8 +70,11 @@ class Keyboard {
     ];
 
     for (let i = 0; i < keys.length; i++) {
-      const row = document.createElement('div');
-      row.classList.add(keyboard.classList[0] + '_row');
+      const row = super._createElement({
+        tag: 'div',
+        name: 'row',
+        parent: keyboard,
+      });
 
       for (let j = 0; j < keys[i].length; j++) {
         const key = new Key({

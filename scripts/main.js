@@ -1,7 +1,7 @@
-import { loadNavbar } from './navbar.js';
+import { Help } from './help.js';
+import { Navbar } from './navbar.js';
 import { Grid } from './grid.js';
 import { Keyboard } from './keyboard.js';
-import { loadHelp } from './help.js';
 
 const LEVELS = {
   Easy: {
@@ -32,16 +32,19 @@ function onSubmit(word) {
 function onLoad() {
   const get = (id) => document.getElementById(id);
 
-  const navbar = get('navbar');
+  const level = 'Easy';
   const mainRow = get('main_row');
-  const help = get('help');
+  const grids = [];
 
-  loadNavbar({
-    navbar,
+  const help = new Help({
+    parent: null,
+    hidden: true,
   });
 
-  const level = 'Easy';
-  const grids = [];
+  const navbar = new Navbar({
+    parent: null,
+    actions: [{ content: '?', onClick: help.toggle.bind(help) }],
+  });
 
   for (let i = 0; i < LEVELS[level].grids; i++) {
     const grid = new Grid({
@@ -59,12 +62,10 @@ function onLoad() {
     grids: grids,
   });
 
+  get('help').replaceWith(help.element);
+  get('navbar').replaceWith(navbar.element);
   get('main_row').append(...grids.map((g) => g.element));
   get('keyboard').replaceWith(keyboard.element);
-
-  loadHelp({
-    help,
-  });
 }
 
 window.addEventListener('load', onLoad);

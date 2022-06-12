@@ -8,7 +8,7 @@
   background-color: #313131;
 }
 
-.navbar_button {
+.navbar_action {
   height: 100%;
   aspect-ratio: 1;
   border-radius: 8px;
@@ -17,10 +17,10 @@
   cursor: pointer;
 }
 
-.navbar_button:hover {
+.navbar_action:hover {
   background-color: #686868;
 }
 
-.navbar_button:active {
+.navbar_action:active {
   background-color: #787878;
 }

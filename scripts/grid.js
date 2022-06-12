@@ -1,7 +1,10 @@
-class Field {
+import { Component } from './component.js';
+
+class Field extends Component {
   _element = null;
 
   constructor(params) {
+    super(params);
     this._element = this._create(params);
   }
 
@@ -38,12 +41,13 @@ class Field {
   }
 
   _create(params) {
-    const field = document.createElement('div');
-    const [parentClass] = params.parent.classList;
-
-    field.classList.add(parentClass + '_field');
-    field.setAttribute('key', params.key);
-    field.addEventListener('click', () => params.onClick(this));
+    const field = super._createElement({
+      tag: 'div',
+      name: 'field',
+      parent: params.parent,
+      attributes: { key: params.key },
+      events: { click: () => params.onClick(this) },
+    });
 
     return field;
   }
@@ -73,7 +77,7 @@ class Field {
   }
 }
 
-class Grid {
+class Grid extends Component {
   _rows = 0;
   _columns = 0;
   _currentRow = 0;
@@ -82,15 +86,11 @@ class Grid {
   _onSubmit = null;
 
   constructor(params) {
+    super(params);
     this._rows = params.rows;
     this._columns = params.columns;
     this._onSubmit = params.onSubmit;
-
-    this._element = this._createGrid({
-      parent: params.parent,
-      columns: params.columns,
-      rows: params.rows,
-    });
+    this._element = this._createGrid(params);
   }
 
   get element() {
@@ -130,10 +130,12 @@ class Grid {
   }
 
   _createGrid(params) {
-    const grid = document.createElement('div');
-
-    grid.classList.add(params.parent.classList[0] + '_grid');
-    grid.style.gridTemplateColumns = `repeat(${params.columns}, 1fr)`;
+    const grid = super._createElement({
+      tag: 'div',
+      name: 'grid',
+      parent: params.parent,
+      style: { gridTemplateColumns: `repeat(${params.columns}, 1fr)` },
+    });
 
     for (let i = 0; i < params.rows * params.columns; i++) {
       const field = new Field({
