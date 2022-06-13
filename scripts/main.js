@@ -3,45 +3,50 @@ import { Navbar } from './navbar.js';
 import { Grid } from './grid.js';
 import { Keyboard } from './keyboard.js';
 import { Menu } from './menu.js';
+import * as api from './api.js';
+import * as words from './words.js';
 
-const LEVELS = {
+const levels = (wordLength) => ({
   Easy: {
     rows: 6,
-    columns: 5,
-    grids: 1,
+    columns: wordLength,
+    words: 1,
   },
   Normal: {
-    rows: 6,
-    columns: 5,
-    grids: 2,
+    rows: 7,
+    columns: wordLength,
+    words: 2,
   },
   Hard: {
-    rows: 6,
-    columns: 5,
-    grids: 4,
+    rows: 9,
+    columns: wordLength,
+    words: 4,
   },
-};
+});
 
 const get = (id) => document.getElementById(id);
 
-function onSubmit(word) {
-  console.log(word);
+async function onSubmit(params) {
+  const correctWord = await words.checkWord(params.word);
 
-  return {
-    colors: ['green', 'black', 'yellow', 'yellow', 'black'],
-  };
+  if (!correctWord) {
+    return Array.from(Array(params.grids).keys()).map(() => null);
+  }
+
+  return await api.checkWord(params);
 }
 
-function loadLevel(level) {
+function loadLevel(level, wordLength) {
   const mainRow = get('main_row');
   const grids = [];
 
-  for (let i = 0; i < LEVELS[level].grids; i++) {
+  const { rows, columns, words } = levels(wordLength)[level];
+
+  for (let i = 0; i < words; i++) {
     const grid = new Grid({
       parent: mainRow,
-      rows: LEVELS[level].rows,
-      columns: LEVELS[level].columns,
-      onSubmit: onSubmit,
+      rows,
+      columns,
     });
 
     grids.push(grid);
@@ -56,7 +61,7 @@ function loadLevel(level) {
   get('main_keyboard').replaceWith(keyboard.element);
 }
 
-function onLoad(level) {
+function onLoad(level, wordLength = 5) {
   const help = new Help({
     parent: null,
     hidden: true,
@@ -65,6 +70,8 @@ function onLoad(level) {
   const menu = new Menu({
     parent: null,
     hidden: true,
+    mode: level,
+    wordLength: wordLength,
   });
 
   const navbar = new Navbar({
@@ -78,9 +85,9 @@ function onLoad(level) {
   get('help').replaceWith(help.element);
   get('menu').replaceWith(menu.element);
   get('navbar').replaceWith(navbar.element);
-  loadLevel(level);
+  loadLevel(level, wordLength);
 }
 
-window.addEventListener('load', () => onLoad('Easy'));
+window.addEventListener('load', () => onLoad('Easy', 5));
 
 export { onSubmit, loadLevel };

@@ -1,4 +1,5 @@
 import { Component } from './component.js';
+import { onSubmit } from './main.js';
 
 class Key extends Component {
   _element = null;
@@ -103,6 +104,21 @@ class Keyboard extends Component {
     return keyboard;
   }
 
+  async _handleSubmit() {
+    const { currentWord } = this._grids[0];
+
+    if (!currentWord) return;
+
+    const results = await onSubmit({
+      word: currentWord,
+      grids: this._grids.length,
+    });
+
+    for (let i = 0; i < results.length; i++) {
+      this._grids[i].submit(results[i]);
+    }
+  }
+
   _onKeyDown({ key }) {
     const isLetter = Boolean(key.length === 1 && key.match(/[a-z]/i));
 
@@ -113,7 +129,7 @@ class Keyboard extends Component {
     const comands = {
       Backspace: () => this._grids.forEach((g) => this._onKeyClick({ value: '⌫' }, g)),
       Delete: () => this._grids.forEach((g) => this._onKeyClick({ value: key }, g)),
-      Enter: () => this._grids.forEach((g) => this._onKeyClick({ value: key }, g)),
+      Enter: () => this._handleSubmit(),
       ArrowLeft: () => this._grids.forEach((g) => g.selectPreviousField()),
       ArrowRight: () => this._grids.forEach((g) => g.selectNextField()),
     };
@@ -128,9 +144,10 @@ class Keyboard extends Component {
     const isBackspace = value === '⌫';
     const isDelete = value === 'DELETE';
     const isEnter = value === 'ENTER';
+    let hadText = false;
 
     if (isEnter) {
-      return grid.handleSubmit();
+      return this._handleSubmit();
     }
 
     if (!grid.hasSelectedField) {
@@ -139,6 +156,7 @@ class Keyboard extends Component {
 
     grid.selectedFields.forEach((field) => {
       if (isBackspace || isDelete) {
+        hadText = Boolean(field.value);
         field.value = '';
       } else {
         field.value = value;
@@ -146,7 +164,7 @@ class Keyboard extends Component {
     });
 
     if (isBackspace) {
-      grid.selectPreviousField();
+      if (!hadText) grid.selectPreviousField();
     } else {
       grid.selectNextField();
     }

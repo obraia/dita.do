@@ -75,6 +75,11 @@ class Field extends Component {
   enable() {
     this._element.classList.remove('disabled');
   }
+
+  wrongAnimation() {
+    this._element.classList.add('wrong');
+    setTimeout(() => this._element.classList.remove('wrong'), 500);
+  }
 }
 
 class Grid extends Component {
@@ -83,13 +88,13 @@ class Grid extends Component {
   _currentRow = 0;
   _element = null;
   _fields = [];
-  _onSubmit = null;
+  _onSelect = null;
 
   constructor(params) {
     super(params);
     this._rows = params.rows;
     this._columns = params.columns;
-    this._onSubmit = params.onSubmit;
+    this._onSelect = params.onSelect;
     this._element = this._createGrid(params);
   }
 
@@ -122,7 +127,12 @@ class Grid extends Component {
   }
 
   get currentWord() {
-    return this.currentRowFields.map((field) => field.value).join('');
+    const word = this.currentRowFields
+      .map((field) => field.value)
+      .join('')
+      .toLowerCase();
+
+    return word.length === this._columns ? word : null;
   }
 
   get hasSelectedField() {
@@ -153,13 +163,13 @@ class Grid extends Component {
     return grid;
   }
 
-  handleSubmit() {
-    if (!this._onSubmit) return;
-    if (this.currentWord.length !== this._columns) return;
+  async submit(params) {
+    if (!params) {
+      return this.startWrongWordAnimation();
+    }
 
-    const { colors } = this._onSubmit(this.currentWord);
-
-    this.paintLine(colors);
+    this.paintLine(params.colors);
+    this.replaceLine(params.word);
 
     if (this._currentRow < this._rows - 1) {
       this.nextLine();
@@ -221,6 +231,10 @@ class Grid extends Component {
     if (!window.event.shiftKey) {
       this.unselectOthersFields(field);
     }
+
+    if (this._onSelect) {
+      this._onSelect(field.value);
+    }
   }
 
   disableLine() {
@@ -244,6 +258,16 @@ class Grid extends Component {
 
   paintLine(colors) {
     this.currentRowFields.forEach((field, index) => field.paint(colors[index]));
+  }
+
+  replaceLine(word) {
+    this.currentRowFields.forEach((field, index) => (field.value = word[index]));
+  }
+
+  startWrongWordAnimation() {
+    this.currentRowFields.forEach((field) => {
+      field.wrongAnimation();
+    });
   }
 }
 

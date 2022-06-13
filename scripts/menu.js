@@ -1,5 +1,6 @@
 import { loadLevel } from './main.js';
 import { Component } from './component.js';
+import { Grid } from './grid.js';
 
 class ListItem extends Component {
   _element = null;
@@ -105,9 +106,13 @@ class List extends Component {
 
 class Menu extends Component {
   _element = null;
+  _mode = null;
+  _wordLength = null;
 
   constructor(params) {
     super(params);
+    this._mode = params.mode;
+    this._wordLength = params.wordLength;
     this._element = this._create(params);
     this.hidden = params.hidden;
   }
@@ -142,14 +147,23 @@ class Menu extends Component {
     const modes = new List({
       parent: container,
       elements: [
-        { label: 'Fácil', value: 'Easy' },
-        { label: 'Normal', value: 'Normal' },
-        { label: 'Difícil', value: 'Hard' },
+        { label: 'Uma palavra', value: 'Easy' },
+        { label: 'Duas palavras', value: 'Normal' },
+        { label: 'Quatro palavras', value: 'Hard' },
       ],
       onSelect: this._onModeSelect.bind(this),
     });
 
-    container.append(modes.element);
+    const wordSizeGrid = new Grid({
+      parent: container,
+      rows: 1,
+      columns: 6,
+      onSelect: this._onWordSizeSelect.bind(this),
+    });
+
+    wordSizeGrid.replaceLine([5, 6, 7, 8, 9, 10]);
+
+    container.append(modes.element, wordSizeGrid.element);
     menu.appendChild(container);
 
     return menu;
@@ -160,8 +174,15 @@ class Menu extends Component {
   }
 
   _onModeSelect(mode) {
+    this._mode = mode;
     this.toggle();
-    loadLevel(mode);
+    loadLevel(this._mode, this._wordLength);
+  }
+
+  _onWordSizeSelect(size) {
+    this._wordLength = Number(size);
+    this.toggle();
+    loadLevel(this._mode, this._wordLength);
   }
 }
 
