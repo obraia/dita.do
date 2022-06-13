@@ -4,6 +4,7 @@ class Component {
 
     if (params.name) {
       element.classList.add(this._getClass(params.parent, params.name));
+      element.id = this._getId(params.parent, params.name);
     }
 
     if (params.classes) {
@@ -41,6 +42,10 @@ class Component {
 
   _getClass(parent, name) {
     return parent ? `${parent.classList[0]}_${name}` : name;
+  }
+
+  _getId(parent, name) {
+    return parent && parent.id ? `${parent.id}_${name}` : name;
   }
 }
 

@@ -88,9 +88,7 @@ class Help extends Component {
 
   constructor(params) {
     super(params);
-
     this._element = this._create(params);
-
     this.hidden = params.hidden;
   }
 

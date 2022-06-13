@@ -42,6 +42,8 @@ class Keyboard extends Component {
   _grids = null;
   _keys = [];
 
+  static onKeyDown = null;
+
   constructor(params) {
     super(params);
     this._grids = params.grids;
@@ -90,27 +92,35 @@ class Keyboard extends Component {
       keyboard.appendChild(row);
     }
 
-    window.addEventListener('keydown', ({ key }) => {
-      const isLetter = Boolean(key.length === 1 && key.match(/[a-z]/i));
+    if (Keyboard.onKeyDown) {
+      window.removeEventListener('keydown', Keyboard.onKeyDown);
+    }
 
-      if (isLetter) {
-        return this._grids.forEach((g) => this._onKeyClick({ value: key }, g));
-      }
+    Keyboard.onKeyDown = this._onKeyDown.bind(this);
 
-      const comands = {
-        Backspace: () => this._grids.forEach((g) => this._onKeyClick({ value: '⌫' }, g)),
-        Delete: () => this._grids.forEach((g) => this._onKeyClick({ value: key }, g)),
-        Enter: () => this._grids.forEach((g) => this._onKeyClick({ value: key }, g)),
-        ArrowLeft: () => this._grids.forEach((g) => g.selectPreviousField()),
-        ArrowRight: () => this._grids.forEach((g) => g.selectNextField()),
-      };
-
-      if (comands[key]) {
-        comands[key]();
-      }
-    });
+    window.addEventListener('keydown', Keyboard.onKeyDown);
 
     return keyboard;
+  }
+
+  _onKeyDown({ key }) {
+    const isLetter = Boolean(key.length === 1 && key.match(/[a-z]/i));
+
+    if (isLetter) {
+      return this._grids.forEach((g) => this._onKeyClick({ value: key }, g));
+    }
+
+    const comands = {
+      Backspace: () => this._grids.forEach((g) => this._onKeyClick({ value: '⌫' }, g)),
+      Delete: () => this._grids.forEach((g) => this._onKeyClick({ value: key }, g)),
+      Enter: () => this._grids.forEach((g) => this._onKeyClick({ value: key }, g)),
+      ArrowLeft: () => this._grids.forEach((g) => g.selectPreviousField()),
+      ArrowRight: () => this._grids.forEach((g) => g.selectNextField()),
+    };
+
+    if (comands[key]) {
+      comands[key]();
+    }
   }
 
   _onKeyClick(key, grid) {

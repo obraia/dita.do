@@ -2,6 +2,7 @@ import { Help } from './help.js';
 import { Navbar } from './navbar.js';
 import { Grid } from './grid.js';
 import { Keyboard } from './keyboard.js';
+import { Menu } from './menu.js';
 
 const LEVELS = {
   Easy: {
@@ -21,6 +22,8 @@ const LEVELS = {
   },
 };
 
+const get = (id) => document.getElementById(id);
+
 function onSubmit(word) {
   console.log(word);
 
@@ -29,22 +32,9 @@ function onSubmit(word) {
   };
 }
 
-function onLoad() {
-  const get = (id) => document.getElementById(id);
-
-  const level = 'Easy';
+function loadLevel(level) {
   const mainRow = get('main_row');
   const grids = [];
-
-  const help = new Help({
-    parent: null,
-    hidden: true,
-  });
-
-  const navbar = new Navbar({
-    parent: null,
-    actions: [{ content: '?', onClick: help.toggle.bind(help) }],
-  });
 
   for (let i = 0; i < LEVELS[level].grids; i++) {
     const grid = new Grid({
@@ -62,12 +52,35 @@ function onLoad() {
     grids: grids,
   });
 
-  get('help').replaceWith(help.element);
-  get('navbar').replaceWith(navbar.element);
-  get('main_row').append(...grids.map((g) => g.element));
-  get('keyboard').replaceWith(keyboard.element);
+  get('main_row').replaceChildren(...grids.map((g) => g.element));
+  get('main_keyboard').replaceWith(keyboard.element);
 }
 
-window.addEventListener('load', onLoad);
+function onLoad(level) {
+  const help = new Help({
+    parent: null,
+    hidden: true,
+  });
 
-export { onSubmit };
+  const menu = new Menu({
+    parent: null,
+    hidden: true,
+  });
+
+  const navbar = new Navbar({
+    parent: null,
+    actions: [
+      { content: 'help', onClick: help.toggle.bind(help) },
+      { content: 'grid_on', onClick: menu.toggle.bind(menu) },
+    ],
+  });
+
+  get('help').replaceWith(help.element);
+  get('menu').replaceWith(menu.element);
+  get('navbar').replaceWith(navbar.element);
+  loadLevel(level);
+}
+
+window.addEventListener('load', () => onLoad('Easy'));
+
+export { onSubmit, loadLevel };

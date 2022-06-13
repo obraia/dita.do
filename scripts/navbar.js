@@ -18,6 +18,7 @@ class Action extends Component {
       name: 'action',
       parent: params.parent,
       innerText: params.content,
+      classes: ['material-icons'],
       events: { click: params.onClick },
     });
 
