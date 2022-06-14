@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost:5001/dita-do/us-central1/api';
+const baseUrl = 'https://us-central1-dita-do.cloudfunctions.net/api';
 
 const checkWord = async (params) => {
   const url = new URL(`${baseUrl}/verify`);
