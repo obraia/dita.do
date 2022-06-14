@@ -40,6 +40,12 @@ class Field extends Component {
     this._element.innerText = text;
   }
 
+  get color() {
+    return Array.from(this._element.classList).find((c) =>
+      ['green', 'yellow', 'black'].includes(c)
+    );
+  }
+
   _create(params) {
     const field = super._createElement({
       tag: 'div',
@@ -79,6 +85,11 @@ class Field extends Component {
   wrongAnimation() {
     this._element.classList.add('wrong');
     setTimeout(() => this._element.classList.remove('wrong'), 500);
+  }
+
+  winAnimation() {
+    this._element.classList.add('win');
+    setTimeout(() => this._element.classList.remove('win'), 1000);
   }
 }
 
@@ -139,11 +150,20 @@ class Grid extends Component {
     return this._fields.some((field) => field.isSelected);
   }
 
+  get isFinished() {
+    return this.currentRowFields.every((field) => field.color === 'green');
+  }
+
+  get key() {
+    return Number(this._element.getAttribute('key'));
+  }
+
   _createGrid(params) {
     const grid = super._createElement({
       tag: 'div',
       name: 'grid',
       parent: params.parent,
+      attributes: { key: params.key },
       style: { gridTemplateColumns: `repeat(${params.columns}, 1fr)` },
     });
 
@@ -170,6 +190,11 @@ class Grid extends Component {
 
     this.paintLine(params.colors);
     this.replaceLine(params.word);
+
+    if (this.isFinished) {
+      this.unselectAllFields();
+      return this.startWinAnimation();
+    }
 
     if (this._currentRow < this._rows - 1) {
       this.nextLine();
@@ -215,6 +240,9 @@ class Grid extends Component {
 
   selectNextField() {
     const current = this.lastSelectedField || this.selectInitialField();
+
+    if (!current) return;
+
     const next = this._fields[current.key + 1];
 
     if (!next) return;
@@ -267,6 +295,12 @@ class Grid extends Component {
   startWrongWordAnimation() {
     this.currentRowFields.forEach((field) => {
       field.wrongAnimation();
+    });
+  }
+
+  startWinAnimation() {
+    this.currentRowFields.forEach((field) => {
+      field.winAnimation();
     });
   }
 }

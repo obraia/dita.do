@@ -36,11 +36,20 @@ class Key extends Component {
 
     return key;
   }
+
+  lock() {
+    this._element.classList.add('locked');
+  }
+
+  unlock() {
+    this._element.classList.remove('locked');
+  }
 }
 
 class Keyboard extends Component {
   _element = null;
   _grids = null;
+  _locked = false;
   _keys = [];
 
   static onKeyDown = null;
@@ -48,6 +57,7 @@ class Keyboard extends Component {
   constructor(params) {
     super(params);
     this._grids = params.grids;
+    this._words = params.grids.length;
     this._element = this._create(params);
   }
 
@@ -105,18 +115,31 @@ class Keyboard extends Component {
   }
 
   async _handleSubmit() {
+    if (this._grids.length === 0) {
+      return;
+    }
+
     const { currentWord } = this._grids[0];
 
-    if (!currentWord) return;
+    if (!currentWord && !this._locked) {
+      return;
+    }
+
+    this._lock();
 
     const results = await onSubmit({
       word: currentWord,
-      grids: this._grids.length,
+      words: this._words,
+      keys: this._grids.map((g) => g.key),
     });
 
     for (let i = 0; i < results.length; i++) {
       this._grids[i].submit(results[i]);
     }
+
+    this._removeFinishedGrids();
+
+    this._unlock();
   }
 
   _onKeyDown({ key }) {
@@ -168,6 +191,20 @@ class Keyboard extends Component {
     } else {
       grid.selectNextField();
     }
+  }
+
+  _lock() {
+    this._locked = true;
+    this._keys.forEach((key) => key.lock());
+  }
+
+  _unlock() {
+    this._locked = false;
+    this._keys.forEach((key) => key.unlock());
+  }
+
+  _removeFinishedGrids() {
+    this._grids = this._grids.filter((g) => !g.isFinished);
   }
 }
 

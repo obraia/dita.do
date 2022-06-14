@@ -1,3 +1,5 @@
+const primos = require('./data/primos.json');
+
 const filesNames = {
   5: './data/palavras_05.json',
   6: './data/palavras_06.json',
@@ -23,7 +25,7 @@ function random(seed) {
   return x - Math.floor(x);
 }
 
-function getRandomIntInclusive(min, max, seed) {
+function getRandomIndex(min, max, seed) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(random(seed) * (max - min + 1)) + min;
@@ -33,8 +35,24 @@ function currentWord(size, seed) {
   const count = currentCount();
   const file = filesNames[size];
   const words = require(file);
-  const index = getRandomIntInclusive(0, words.length, count + seed);
-  return words[index];
+  const index = getRandomIndex(0, words.length, primos[count] * primos[seed]);
+  return normalizeWord(words[index]);
+}
+
+function normalizeWord(str) {
+  str = str.replace(/[ÀÁÂÃÄÅ]/, 'A');
+  str = str.replace(/[àáâãäå]/, 'a');
+  str = str.replace(/[ÈÉÊË]/, 'E');
+  str = str.replace(/[èéêë]/, 'e');
+  str = str.replace(/[ÌÍÎÏ]/, 'I');
+  str = str.replace(/[ìíîï]/, 'i');
+  str = str.replace(/[ÒÓÔÕÖ]/, 'O');
+  str = str.replace(/[òóôõö]/, 'o');
+  str = str.replace(/[ÙÚÛÜ]/, 'U');
+  str = str.replace(/[ùúûü]/, 'u');
+  str = str.replace(/[Ç]/, 'C');
+  str = str.replace(/[ç]/, 'c');
+  return str.replace(/[^a-z0-9]/gi, '');
 }
 
 function getColors(word, correctWord) {

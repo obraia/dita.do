@@ -30,10 +30,12 @@ async function onSubmit(params) {
   const correctWord = await words.checkWord(params.word);
 
   if (!correctWord) {
-    return Array.from(Array(params.grids).keys()).map(() => null);
+    return Array.from(Array(params.keys.length).keys()).map(() => null);
   }
 
-  return await api.checkWord(params);
+  const response = await api.checkWord(params);
+
+  return response.map((r) => ({ colors: r.colors, word: correctWord }));
 }
 
 function loadLevel(level, wordLength) {
@@ -45,6 +47,7 @@ function loadLevel(level, wordLength) {
   for (let i = 0; i < words; i++) {
     const grid = new Grid({
       parent: mainRow,
+      key: i,
       rows,
       columns,
     });

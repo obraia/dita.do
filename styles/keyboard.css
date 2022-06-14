@@ -72,6 +72,13 @@
   background-color: #2c7a58;
 }
 
+.main_keyboard_row_key.locked {
+  transition: 0.2s;
+  background-color: #565656;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
 @media screen and (max-width: 620px) {
   .main_keyboard {
     width: 100%;
