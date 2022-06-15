@@ -138,6 +138,12 @@ class Help extends Component {
     helpInfo.append(grid.element, legend.element, instructions.element);
     help.appendChild(helpInfo);
 
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'F1') {
+        this.toggle();
+      }
+    });
+
     return help;
   }
 

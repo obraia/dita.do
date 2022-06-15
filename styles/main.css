@@ -3,6 +3,7 @@
 @import url(./keyboard.css);
 @import url(./help.css);
 @import url(./menu.css);
+@import url(./results.css);
 
 * {
   margin: 0;

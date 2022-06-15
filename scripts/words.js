@@ -1,4 +1,5 @@
 const files = {
+  4: './data/palavras_04.json',
   5: './data/palavras_05.json',
   6: './data/palavras_06.json',
   7: './data/palavras_07.json',

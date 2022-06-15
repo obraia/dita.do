@@ -157,14 +157,20 @@ class Menu extends Component {
     const wordSizeGrid = new Grid({
       parent: container,
       rows: 1,
-      columns: 6,
+      columns: 5,
       onSelect: this._onWordSizeSelect.bind(this),
     });
 
-    wordSizeGrid.replaceLine([5, 6, 7, 8, 9, 10]);
+    wordSizeGrid.replaceLine([4, 5, 6, 7, 8]);
 
     container.append(modes.element, wordSizeGrid.element);
     menu.appendChild(container);
+
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        this.toggle();
+      }
+    });
 
     return menu;
   }

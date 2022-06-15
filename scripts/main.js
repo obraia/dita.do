@@ -1,8 +1,9 @@
-import { Help } from './help.js';
 import { Navbar } from './navbar.js';
+import { Help } from './help.js';
+import { Menu } from './menu.js';
+import { Results } from './results.js';
 import { Grid } from './grid.js';
 import { Keyboard } from './keyboard.js';
-import { Menu } from './menu.js';
 import * as api from './api.js';
 import * as words from './words.js';
 
@@ -77,6 +78,13 @@ function onLoad(level, wordLength = 5) {
     wordLength: wordLength,
   });
 
+  const results = new Results({
+    parent: null,
+    hidden: true,
+    mode: level,
+    wordLength: wordLength,
+  });
+
   const navbar = new Navbar({
     parent: null,
     actions: [
@@ -87,6 +95,7 @@ function onLoad(level, wordLength = 5) {
 
   get('help').replaceWith(help.element);
   get('menu').replaceWith(menu.element);
+  get('results').replaceWith(results.element);
   get('navbar').replaceWith(navbar.element);
   loadLevel(level, wordLength);
 }

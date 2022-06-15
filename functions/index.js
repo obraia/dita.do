@@ -8,7 +8,7 @@ const routes = express.Router();
 routes.get('/verify', (req, res) => {
   let { word, words, keys } = req.query;
 
-  if (!word || word.length < 5 || word.length > 10) {
+  if (!word || word.length < 4 || word.length > 9) {
     res.status(400).send('Word is invalid');
   }
 
