@@ -7,13 +7,6 @@ class Results extends Component {
     super(params);
     this._element = this._create(params);
     this.hidden = params.hidden;
-
-    this.setResult({
-      word: 'Denegrir',
-      score: '100',
-      time: '3.5 min',
-      isWinner: true,
-    });
   }
 
   get element() {
@@ -61,6 +54,8 @@ class Results extends Component {
   }
 
   setResult(params) {
+    const children = [];
+
     const result = super._createElement({
       tag: 'div',
       name: 'result',
@@ -69,26 +64,29 @@ class Results extends Component {
       innerText: params.isWinner ? 'Você venceu :)' : 'Você perdeu :(',
     });
 
-    const word = super._createElement({
-      tag: 'div',
-      name: 'word',
-      parent: this._element.firstElementChild,
-      innerText: 'A palavra era: ' + params.word,
-    });
+    children.push(result);
 
-    const score = super._createElement({
-      tag: 'div',
-      name: 'score',
-      parent: this._element.firstElementChild,
-      innerText: 'Sua pontuação foi: ' + params.score,
-    });
+    if (params.word) {
+      const word = super._createElement({
+        tag: 'div',
+        name: 'word',
+        parent: this._element.firstElementChild,
+        innerText: 'A palavra era: ' + params.word,
+      });
 
-    const time = super._createElement({
-      tag: 'div',
-      name: 'time',
-      parent: this._element.firstElementChild,
-      innerText: 'O tempo total foi: ' + params.time,
-    });
+      children.push(word);
+    }
+
+    if (params.time) {
+      const time = super._createElement({
+        tag: 'div',
+        name: 'time',
+        parent: this._element.firstElementChild,
+        innerText: 'O tempo total foi: ' + params.time,
+      });
+
+      children.push(time);
+    }
 
     const playAgain = super._createElement({
       tag: 'button',
@@ -98,7 +96,9 @@ class Results extends Component {
       events: { click: () => window.location.reload() },
     });
 
-    this._element.firstElementChild.append(result, word, score, time, playAgain);
+    children.push(playAgain);
+
+    this._element.firstElementChild.replaceChildren(...children);
   }
 }
 

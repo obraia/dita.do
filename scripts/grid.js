@@ -100,6 +100,7 @@ class Grid extends Component {
   _element = null;
   _fields = [];
   _onSelect = null;
+  _isFinished = false;
 
   constructor(params) {
     super(params);
@@ -150,8 +151,16 @@ class Grid extends Component {
     return this._fields.some((field) => field.isSelected);
   }
 
-  get isFinished() {
+  get isWin() {
     return this.currentRowFields.every((field) => field.color === 'green');
+  }
+
+  get isFinished() {
+    return this._isFinished;
+  }
+
+  set isFinished(value) {
+    this._isFinished = value;
   }
 
   get key() {
@@ -191,7 +200,7 @@ class Grid extends Component {
     this.paintLine(params.colors);
     this.replaceLine(params.word);
 
-    if (this.isFinished) {
+    if (this.isWin) {
       this.unselectAllFields();
       return this.startWinAnimation();
     }
@@ -199,6 +208,9 @@ class Grid extends Component {
     if (this._currentRow < this._rows - 1) {
       this.nextLine();
       this.selectInitialField();
+    } else {
+      this.unselectAllFields();
+      this.isFinished = true;
     }
   }
 

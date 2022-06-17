@@ -63,6 +63,10 @@ function loadLevel(level, wordLength) {
 
   get('main_row').replaceChildren(...grids.map((g) => g.element));
   get('main_keyboard').replaceWith(keyboard.element);
+
+  const initialTime = Date.now();
+
+  return { grids, keyboard, initialTime };
 }
 
 function onLoad(level, wordLength = 5) {
@@ -97,7 +101,17 @@ function onLoad(level, wordLength = 5) {
   get('menu').replaceWith(menu.element);
   get('results').replaceWith(results.element);
   get('navbar').replaceWith(navbar.element);
-  loadLevel(level, wordLength);
+
+  const { grids, initialTime } = loadLevel(level, wordLength);
+
+  window.context = {
+    help,
+    menu,
+    results,
+    navbar,
+    grids,
+    initialTime,
+  };
 }
 
 window.addEventListener('load', () => onLoad('Easy', 5));

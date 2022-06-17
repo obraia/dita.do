@@ -1,5 +1,6 @@
 import { Component } from './component.js';
 import { onSubmit } from './main.js';
+import { diffInMinutes } from './time.js';
 
 class Key extends Component {
   _element = null;
@@ -139,6 +140,15 @@ class Keyboard extends Component {
 
     this._removeFinishedGrids();
 
+    if (this._grids.length === 0) {
+      window.context.results.setResult({
+        time: diffInMinutes(Date.now(), window.context.initialTime) + ' minutos',
+        isWinner: window.context.grids.every((g) => g.isWin),
+      });
+
+      window.context.results.toggle();
+    }
+
     this._unlock();
   }
 
@@ -204,7 +214,7 @@ class Keyboard extends Component {
   }
 
   _removeFinishedGrids() {
-    this._grids = this._grids.filter((g) => !g.isFinished);
+    this._grids = this._grids.filter((g) => !g.isFinished && !g.isWin);
   }
 }
 
