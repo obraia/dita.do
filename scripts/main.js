@@ -66,7 +66,9 @@ function loadLevel(level, wordLength) {
 
   const initialTime = Date.now();
 
-  return { grids, keyboard, initialTime };
+  window.context.grids = grids;
+  window.context.keyboard = keyboard;
+  window.context.initialTime = initialTime;
 }
 
 function onLoad(level, wordLength = 5) {
@@ -102,16 +104,14 @@ function onLoad(level, wordLength = 5) {
   get('results').replaceWith(results.element);
   get('navbar').replaceWith(navbar.element);
 
-  const { grids, initialTime } = loadLevel(level, wordLength);
-
   window.context = {
     help,
     menu,
     results,
     navbar,
-    grids,
-    initialTime,
   };
+
+  loadLevel(level, wordLength);
 }
 
 window.addEventListener('load', () => onLoad('Easy', 5));
